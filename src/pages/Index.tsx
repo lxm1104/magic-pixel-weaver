@@ -1,7 +1,7 @@
-
 import { useState, useCallback, useRef } from 'react';
 import { Sparkles, Info, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 import ImageUploader from '@/components/ImageUploader';
 import AnimatedButton from '@/components/AnimatedButton';
 import LoadingAnimation from '@/components/LoadingAnimation';
@@ -22,7 +22,6 @@ const EXAMPLE_PROMPTS = [
   "A cosmic traveler exploring crystalline planets"
 ];
 
-// Mock data for demo
 const DEMO_IMAGES: GeneratedImage[] = [
   {
     id: '1',
@@ -57,6 +56,7 @@ const Index = () => {
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
+  const isMobile = useIsMobile();
 
   const handleImagesSelected = useCallback((files: File[]) => {
     setSelectedFiles(prev => [...prev, ...files]);
@@ -109,25 +109,36 @@ const Index = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-artistic-cream to-artistic-mistyBlue">
-      <header className="py-6 px-4 sm:px-6 lg:px-8 backdrop-blur-sm bg-white/30 sticky top-0 z-30 border-b border-white/40">
+      <header className={cn(
+        "py-4 px-4 backdrop-blur-sm bg-white/30 sticky top-0 z-30 border-b border-white/40",
+        isMobile ? "py-3" : "py-6 sm:px-6 lg:px-8"
+      )}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-artistic-deepBrown" />
-            <h1 className="text-xl font-medium text-artistic-deepBrown">Magic Pixel Weaver</h1>
+            <Sparkles className={cn(isMobile ? "w-5 h-5" : "w-6 h-6", "text-artistic-deepBrown")} />
+            <h1 className={cn(isMobile ? "text-lg" : "text-xl", "font-medium text-artistic-deepBrown")}>Magic Pixel</h1>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-12">
+      <main className={cn(
+        "flex-1 py-4 px-4",
+        isMobile ? "" : "py-8 sm:px-6 lg:px-8"
+      )}>
+        <div className="max-w-7xl mx-auto space-y-6">
           {/* Generated Image Display */}
-          <section className="space-y-6">
+          <section className="space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-artistic-deepBrown">Your AI Creations</h2>
+              <h2 className={cn(
+                "font-semibold text-artistic-deepBrown",
+                isMobile ? "text-xl" : "text-2xl"
+              )}>
+                {isMobile ? "AI Creations" : "Your AI Creations"}
+              </h2>
             </div>
             
             {generatedImages.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
                 {generatedImages.map(image => (
                   <ImageCard
                     key={image.id}
@@ -140,45 +151,71 @@ const Index = () => {
                 ))}
               </div>
             ) : (
-              <div className="glass-card rounded-xl p-10 text-center space-y-4">
-                <div className="w-16 h-16 mx-auto bg-white/50 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-artistic-deepBrown/70" />
+              <div className={cn(
+                "glass-card rounded-xl text-center space-y-3",
+                isMobile ? "p-5" : "p-10 space-y-4"
+              )}>
+                <div className={cn(
+                  "mx-auto bg-white/50 rounded-full flex items-center justify-center",
+                  isMobile ? "w-12 h-12" : "w-16 h-16"
+                )}>
+                  <Sparkles className={cn(
+                    "text-artistic-deepBrown/70",
+                    isMobile ? "w-6 h-6" : "w-8 h-8"
+                  )} />
                 </div>
-                <h3 className="text-lg font-medium text-artistic-deepBrown">Create your first AI masterpiece</h3>
-                <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                  Enter a prompt below, optionally add reference images, and let AI bring your vision to life
-                </p>
+                <h3 className={cn(
+                  "font-medium text-artistic-deepBrown",
+                  isMobile ? "text-base" : "text-lg"
+                )}>
+                  {isMobile ? "Create AI art" : "Create your first AI masterpiece"}
+                </h3>
+                {!isMobile && (
+                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                    Enter a prompt below, optionally add reference images, and let AI bring your vision to life
+                  </p>
+                )}
               </div>
             )}
           </section>
 
           {/* Reference Images Section */}
-          <section className="glass-card rounded-xl p-6 space-y-4">
+          <section className="glass-card rounded-xl p-4 space-y-3 sm:p-6 sm:space-y-4">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-medium text-artistic-deepBrown">Reference Images</h3>
-                <p className="text-sm text-muted-foreground">Upload images to guide the AI's creative process</p>
+                <h3 className={cn(
+                  "font-medium text-artistic-deepBrown",
+                  isMobile ? "text-base" : "text-lg"
+                )}>Reference Images</h3>
+                {!isMobile && (
+                  <p className="text-sm text-muted-foreground">Upload images to guide the AI's creative process</p>
+                )}
               </div>
               <div className="glass-card p-1.5 rounded-full">
-                <Info className="w-4 h-4 text-muted-foreground" />
+                <Info className={cn(isMobile ? "w-3.5 h-3.5" : "w-4 h-4", "text-muted-foreground")} />
               </div>
             </div>
             
             <ImageUploader 
               onImagesSelected={handleImagesSelected}
-              maxImages={4}
+              maxImages={isMobile ? 2 : 4}
             />
           </section>
 
           {/* Prompt Input Section */}
-          <section className="glass-card rounded-xl p-6 space-y-4">
+          <section className="glass-card rounded-xl p-4 space-y-3 sm:p-6 sm:space-y-4">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-medium text-artistic-deepBrown">Prompt</h3>
-                <p className="text-sm text-muted-foreground">Describe your creative vision in detail</p>
+                <h3 className={cn(
+                  "font-medium text-artistic-deepBrown",
+                  isMobile ? "text-base" : "text-lg"
+                )}>Prompt</h3>
+                {!isMobile && (
+                  <p className="text-sm text-muted-foreground">Describe your creative vision in detail</p>
+                )}
               </div>
               <div className="glass-card p-1.5 rounded-full">
-                <Lightbulb className="w-4 h-4 text-muted-foreground" />
+                <Lightbulb className={cn(isMobile ? "w-3.5 h-3.5" : "w-4 h-4", "text-muted-foreground")} />
               </div>
             </div>
             
@@ -188,22 +225,27 @@ const Index = () => {
                 value={prompt}
                 onChange={handlePromptChange}
                 onKeyDown={handlePromptKeyDown}
-                placeholder="Describe the image you want to create..."
-                className="w-full min-h-[120px] rounded-lg border border-input bg-white/70 backdrop-blur-sm px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                placeholder={isMobile ? "Describe your image..." : "Describe the image you want to create..."}
+                className={cn(
+                  "w-full rounded-lg border border-input bg-white/70 backdrop-blur-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring",
+                  isMobile ? "min-h-[80px]" : "min-h-[120px] px-4 py-3"
+                )}
               />
               
-              <div className="flex flex-wrap gap-2">
-                <span className="text-xs text-muted-foreground pt-1">Try:</span>
-                {EXAMPLE_PROMPTS.map((example, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleExampleClick(example)}
-                    className="text-xs px-3 py-1 rounded-full bg-white/50 hover:bg-white/70 text-muted-foreground transition-colors"
-                  >
-                    {example}
-                  </button>
-                ))}
-              </div>
+              {(!isMobile || prompt.length === 0) && (
+                <div className="flex flex-wrap gap-2">
+                  <span className="text-xs text-muted-foreground pt-1">Try:</span>
+                  {EXAMPLE_PROMPTS.slice(0, isMobile ? 2 : 4).map((example, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleExampleClick(example)}
+                      className="text-xs px-3 py-1 rounded-full bg-white/50 hover:bg-white/70 text-muted-foreground transition-colors"
+                    >
+                      {isMobile ? example.substring(0, 30) + (example.length > 30 ? '...' : '') : example}
+                    </button>
+                  ))}
+                </div>
+              )}
               
               <div className="flex justify-end pt-2">
                 <AnimatedButton
@@ -211,7 +253,7 @@ const Index = () => {
                   loading={isGenerating}
                   disabled={!prompt.trim()}
                 >
-                  Generate Image
+                  {isMobile ? "Generate" : "Generate Image"}
                 </AnimatedButton>
               </div>
             </div>
@@ -220,9 +262,12 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="py-6 px-4 sm:px-6 lg:px-8 backdrop-blur-sm bg-white/30 border-t border-white/40">
+      <footer className={cn(
+        "backdrop-blur-sm bg-white/30 border-t border-white/40",
+        isMobile ? "py-4 px-4" : "py-6 px-4 sm:px-6 lg:px-8"
+      )}>
         <div className="max-w-7xl mx-auto text-center text-sm text-muted-foreground">
-          <p>Magic Pixel Weaver — Create beautiful AI-generated imagery</p>
+          <p>{isMobile ? "Magic Pixel — AI Image Creator" : "Magic Pixel Weaver — Create beautiful AI-generated imagery"}</p>
         </div>
       </footer>
 
