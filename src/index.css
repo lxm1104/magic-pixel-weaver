@@ -92,16 +92,28 @@
 
   body {
     @apply bg-artistic-cream text-foreground;
+    background-image: 
+      radial-gradient(circle at 80% 5%, rgba(243, 244, 246, 0.5) 0%, transparent 20%),
+      radial-gradient(circle at 15% 90%, rgba(211, 228, 253, 0.3) 0%, transparent 25%);
+  }
+  
+  ::selection {
+    @apply bg-primary/20 text-primary;
   }
 }
 
 @layer components {
   .glass-card {
     @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 
+                0 1px 3px rgba(0, 0, 0, 0.08), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.5);
   }
   
   .glass-button {
     @apply bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all duration-300 shadow-md border border-white/30 text-primary font-medium;
+    box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.08), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
   }
 
   .pulse-animation {
@@ -115,5 +127,31 @@
   .sparkle-effect::before {
     content: '';
     @apply absolute w-8 h-8 bg-white/80 rounded-full animate-sparkle;
+  }
+  
+  .noise-texture {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px;
+    pointer-events: none;
+  }
+  
+  .frosted-glass {
+    @apply backdrop-blur-md bg-white/30 border border-white/20;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  
+  .neuomorphic {
+    @apply bg-white/80 rounded-xl;
+    box-shadow: 
+      10px 10px 20px rgba(0, 0, 0, 0.05),
+      -10px -10px 20px rgba(255, 255, 255, 0.7),
+      inset 2px 2px 5px rgba(255, 255, 255, 1),
+      inset -2px -2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .inner-shadow {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 }
