@@ -15,6 +15,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Input } from "@/components/ui/input";
 
 interface GeneratedImage {
   id: string;
@@ -25,9 +26,7 @@ interface GeneratedImage {
 
 const EXAMPLE_PROMPTS = [
   "A mystical forest at dawn with glowing mushrooms",
-  "A futuristic cityscape with floating gardens",
-  "An underwater castle with bioluminescent coral",
-  "A cosmic traveler exploring crystalline planets"
+  "A futuristic cityscape with floating gardens"
 ];
 
 const DEMO_IMAGES: GeneratedImage[] = [
@@ -63,14 +62,14 @@ const Index = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const promptInputRef = useRef<HTMLTextAreaElement>(null);
+  const promptInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
 
   const handleImagesSelected = useCallback((files: File[]) => {
     setSelectedFiles(prev => [...prev, ...files]);
   }, []);
 
-  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handlePromptChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPrompt(e.target.value);
   };
 
@@ -117,8 +116,6 @@ const Index = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-artistic-cream to-artistic-mistyBlue">
-      {/* Header removed */}
-
       <main className={cn(
         "flex-1 py-4 px-4",
         isMobile ? "" : "py-8 sm:px-6 lg:px-8"
@@ -131,7 +128,7 @@ const Index = () => {
                 "font-semibold text-artistic-deepBrown",
                 isMobile ? "text-xl" : "text-2xl"
               )}>
-                {isMobile ? "AI Creations" : "Your AI Creations"}
+                Generate Image
               </h2>
             </div>
             
@@ -158,28 +155,23 @@ const Index = () => {
             ) : (
               <div className={cn(
                 "glass-card rounded-xl text-center space-y-3",
-                isMobile ? "p-5" : "p-10 space-y-4"
+                isMobile ? "p-5" : "p-5 w-1/2 mx-auto space-y-2"
               )}>
                 <div className={cn(
                   "mx-auto bg-white/50 rounded-full flex items-center justify-center",
-                  isMobile ? "w-12 h-12" : "w-16 h-16"
+                  isMobile ? "w-12 h-12" : "w-8 h-8"
                 )}>
                   <Sparkles className={cn(
                     "text-artistic-deepBrown/70",
-                    isMobile ? "w-6 h-6" : "w-8 h-8"
+                    isMobile ? "w-6 h-6" : "w-4 h-4"
                   )} />
                 </div>
                 <h3 className={cn(
                   "font-medium text-artistic-deepBrown",
-                  isMobile ? "text-base" : "text-lg"
+                  isMobile ? "text-base" : "text-sm"
                 )}>
                   {isMobile ? "Create AI art" : "Create your first AI masterpiece"}
                 </h3>
-                {!isMobile && (
-                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                    Enter a prompt below, optionally add reference images, and let AI bring your vision to life
-                  </p>
-                )}
               </div>
             )}
           </section>
@@ -238,22 +230,32 @@ const Index = () => {
             </div>
             
             <div className="space-y-3">
-              <textarea
-                ref={promptInputRef}
-                value={prompt}
-                onChange={handlePromptChange}
-                onKeyDown={handlePromptKeyDown}
-                placeholder={isMobile ? "Describe your image..." : "Describe the image you want to create..."}
-                className={cn(
-                  "w-full rounded-lg border border-input bg-white/70 backdrop-blur-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring",
-                  isMobile ? "min-h-[80px]" : "min-h-[120px] px-4 py-3"
-                )}
-              />
+              <div className="flex gap-2">
+                <Input
+                  ref={promptInputRef}
+                  value={prompt}
+                  onChange={handlePromptChange}
+                  onKeyDown={handlePromptKeyDown}
+                  placeholder={isMobile ? "Describe your image..." : "Describe the image you want to create..."}
+                  className={cn(
+                    "flex-1 border border-input bg-white/70 backdrop-blur-sm",
+                    isMobile ? "h-10" : "h-12"
+                  )}
+                />
+                <AnimatedButton
+                  onClick={handleGenerate}
+                  loading={isGenerating}
+                  disabled={!prompt.trim()}
+                  className="shrink-0"
+                >
+                  {isMobile ? "Generate" : "Generate Image"}
+                </AnimatedButton>
+              </div>
               
               {(!isMobile || prompt.length === 0) && (
                 <div className="flex flex-wrap gap-2">
                   <span className="text-xs text-muted-foreground pt-1">Try:</span>
-                  {EXAMPLE_PROMPTS.slice(0, isMobile ? 2 : 4).map((example, index) => (
+                  {EXAMPLE_PROMPTS.slice(0, 2).map((example, index) => (
                     <button
                       key={index}
                       onClick={() => handleExampleClick(example)}
@@ -264,16 +266,6 @@ const Index = () => {
                   ))}
                 </div>
               )}
-              
-              <div className="flex justify-end pt-2">
-                <AnimatedButton
-                  onClick={handleGenerate}
-                  loading={isGenerating}
-                  disabled={!prompt.trim()}
-                >
-                  {isMobile ? "Generate" : "Generate Image"}
-                </AnimatedButton>
-              </div>
             </div>
           </section>
         </div>
