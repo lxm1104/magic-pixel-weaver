@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { Upload, XCircle, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -8,11 +7,16 @@ interface ImageUploaderProps {
   onImagesSelected: (files: File[]) => void;
   maxImages?: number;
   className?: string;
+  hasImages?: boolean;
 }
 
-const ImageUploader = ({ onImagesSelected, maxImages = 4, className }: ImageUploaderProps) => {
+const ImageUploader = ({ onImagesSelected, maxImages = 4, className, hasImages = false }: ImageUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [previewImages, setPreviewImages] = useState<{ file: File; preview: string }[]>([]);
+
+  if (hasImages) {
+    return null;
+  }
 
   const processFiles = useCallback((files: FileList | null) => {
     if (!files) return;

@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useRef } from 'react';
 import { Sparkles, Info, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
@@ -7,6 +8,13 @@ import AnimatedButton from '@/components/AnimatedButton';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import ImageCard from '@/components/ImageCard';
 import { cn } from '@/lib/utils';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface GeneratedImage {
   id: string;
@@ -109,17 +117,7 @@ const Index = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-artistic-cream to-artistic-mistyBlue">
-      <header className={cn(
-        "py-4 px-4 backdrop-blur-sm bg-white/30 sticky top-0 z-30 border-b border-white/40",
-        isMobile ? "py-3" : "py-6 sm:px-6 lg:px-8"
-      )}>
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Sparkles className={cn(isMobile ? "w-5 h-5" : "w-6 h-6", "text-artistic-deepBrown")} />
-            <h1 className={cn(isMobile ? "text-lg" : "text-xl", "font-medium text-artistic-deepBrown")}>Magic Pixel</h1>
-          </div>
-        </div>
-      </header>
+      {/* Header removed */}
 
       <main className={cn(
         "flex-1 py-4 px-4",
@@ -138,17 +136,24 @@ const Index = () => {
             </div>
             
             {generatedImages.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
-                {generatedImages.map(image => (
-                  <ImageCard
-                    key={image.id}
-                    src={image.url}
-                    alt={image.prompt}
-                    className="aspect-square"
-                    onClick={() => setSelectedImage(image.id)}
-                    selected={selectedImage === image.id}
-                  />
-                ))}
+              <div className="w-full overflow-x-auto pb-4">
+                <Carousel className="w-full" opts={{ align: "start" }}>
+                  <CarouselContent className="w-full">
+                    {generatedImages.map(image => (
+                      <CarouselItem key={image.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 pl-4">
+                        <ImageCard
+                          src={image.url}
+                          alt={image.prompt}
+                          className="aspect-square w-full"
+                          onClick={() => setSelectedImage(image.id)}
+                          selected={selectedImage === image.id}
+                        />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="hidden sm:flex" />
+                  <CarouselNext className="hidden sm:flex" />
+                </Carousel>
               </div>
             ) : (
               <div className={cn(
@@ -199,7 +204,20 @@ const Index = () => {
             <ImageUploader 
               onImagesSelected={handleImagesSelected}
               maxImages={isMobile ? 2 : 4}
+              hasImages={selectedFiles.length > 0}
             />
+
+            {selectedFiles.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                {selectedFiles.map((_, index) => (
+                  <div key={index} className="relative group rounded-lg overflow-hidden aspect-square bg-gray-100">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <p className="text-xs text-muted-foreground">Reference Image {index + 1}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* Prompt Input Section */}
